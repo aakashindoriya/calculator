@@ -14,13 +14,16 @@ const init = {
   healthAndEducationCess: 0,
   relief: 0,
   tds: 0,
+  gender: "male",
+  residentialStatus: "resident",
+  incomeFromSalary: 0,
+  incomeFromHouseProperty: 0,
 };
 export default function Home() {
   const [data, setData] = useState(init);
   const [isNext, setIsNext] = useState(false);
-  console.log(data, isNext);
   return (
-    <Box m="2%" p="2%">
+    <Box m={["0%", "2%"]} p="2%" maxW="99vw">
       <Heading m="1%">
         ADVANCE TAX CALCULATOR FOR FINANCIAL YEAR 2023-24
       </Heading>

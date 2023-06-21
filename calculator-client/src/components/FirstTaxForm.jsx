@@ -15,6 +15,8 @@ import {
   calculateTaxForForigenCompany,
 } from "../customfunctions/TaxCalulator";
 import { motion } from "framer-motion";
+import IndividualForm from "./IndividualForm";
+import { useEffect } from "react";
 
 function TaxCalculatorForm({ data, setData, next }) {
   function handleChange(e) {
@@ -25,7 +27,7 @@ function TaxCalculatorForm({ data, setData, next }) {
       alert("Please Enter Taxable-Income");
       return;
     }
-    if (data.payer == "huf") {
+    if (data.payer == "huf" || data.payer == "individual") {
       let response = calculateNewTaxRegimeHUF(
         Number(data.taxableIncome),
         data.optfor115BAC == "true" ? true : false
@@ -83,6 +85,15 @@ function TaxCalculatorForm({ data, setData, next }) {
     }
     next(true);
   }
+  function handleNetIncome() {
+    let total =
+      Number(data.incomeFromSalary) + Number(data.incomeFromHouseProperty);
+    setData({ ...data, taxableIncome: total });
+  }
+  useEffect(() => {
+    handleNetIncome();
+  }, [data.incomeFromSalary, data.incomeFromHouseProperty]);
+
   return (
     <Box
       maxWidth={["400px", "600px"]}
@@ -132,6 +143,9 @@ function TaxCalculatorForm({ data, setData, next }) {
             <option value="false">No</option>
           </Select>
         </FormControl>
+      )}
+      {data.payer == "individual" && (
+        <IndividualForm data={data} setData={setData} />
       )}
       {data.payer == "co-oprative" && data.optfor115BAE != "true" && (
         <FormControl>
