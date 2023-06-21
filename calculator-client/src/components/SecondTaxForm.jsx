@@ -12,25 +12,34 @@ function TaxResultForm({ data, setData, next }) {
   function handleChange(e) {
     setData({ ...data, [e.target.name]: e.target.value });
   }
-
+  let AssessedTax =
+    Number(data.incomeTax) +
+    Number(data.surcharge) +
+    Number(data.healthAndEducationCess) -
+    Number(data.relief) -
+    Number(data.tds);
   return (
     <Box
       as={motion.div}
       initial={{ x: -100 }}
       animate={{ x: 0 }}
       exit={{ x: 100 }}
-      maxWidth="400px"
+      maxWidth={["400px", "600px"]}
       mx="auto"
       py={4}
-      border="1px solid"
       pos="relative"
       padding={"2%"}
+      boxShadow={"inner"}
+      bg="white"
+      borderRadius={"20px"}
     >
       <Button
         position={"absolute"}
         top="1%"
         right={"10%"}
+        zIndex={10}
         onClick={() => next(false)}
+        variant={"outline"}
       >
         <RiArrowGoBackFill />
       </Button>
@@ -42,6 +51,7 @@ function TaxResultForm({ data, setData, next }) {
           name="incomeTax"
           value={data.incomeTax}
           onChange={handleChange}
+          variant="filled"
         />
       </FormControl>
 
@@ -53,6 +63,7 @@ function TaxResultForm({ data, setData, next }) {
           name="surcharge"
           value={data.surcharge}
           onChange={handleChange}
+          variant="filled"
         />
       </FormControl>
 
@@ -64,6 +75,7 @@ function TaxResultForm({ data, setData, next }) {
           name="healthAndEducationCess"
           value={data.healthAndEducationCess}
           onChange={handleChange}
+          variant="filled"
         />
       </FormControl>
 
@@ -75,26 +87,44 @@ function TaxResultForm({ data, setData, next }) {
           name="totalTaxLiability"
           value={data.totalTaxLiability}
           onChange={handleChange}
+          variant="filled"
         />
       </FormControl>
 
       <FormControl mb={4}>
         <FormLabel>Relief</FormLabel>
-        <Input type="number" placeholder="Relief" />
+        <Input
+          type="number"
+          placeholder="Relief"
+          name="relief"
+          value={data.relief}
+          onChange={handleChange}
+        />
       </FormControl>
 
       <FormControl mb={4}>
         <FormLabel>TDS/TCS/MAT (AMT) Credit Utilized</FormLabel>
-        <Input type="number" placeholder="TDS/TCS/MAT (AMT) Credit Utilized" />
+        <Input
+          type="number"
+          placeholder="TDS/TCS/MAT (AMT) Credit Utilized"
+          name="tds"
+          value={data.tds}
+          onChange={handleChange}
+        />
       </FormControl>
 
       <FormControl mb={4}>
         <FormLabel>Assessed Tax</FormLabel>
-        <Input type="number" placeholder="Assessed Tax" />
+        <Input
+          type="number"
+          placeholder="Assessed Tax"
+          variant="filled"
+          value={AssessedTax}
+        />
       </FormControl>
 
       <Button colorScheme="blue" mt={4} width={"full"}>
-        Next
+        Claculate
       </Button>
     </Box>
   );

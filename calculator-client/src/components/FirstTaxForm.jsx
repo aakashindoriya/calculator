@@ -21,6 +21,10 @@ function TaxCalculatorForm({ data, setData, next }) {
     setData({ ...data, [e.target.name]: e.target.value });
   }
   function handleTax() {
+    if (data.taxableIncome == 0) {
+      alert("Please Enter Taxable-Income");
+      return;
+    }
     if (data.payer == "huf") {
       let response = calculateNewTaxRegimeHUF(
         Number(data.taxableIncome),
@@ -34,16 +38,63 @@ function TaxCalculatorForm({ data, setData, next }) {
         totalTaxLiability: response.totalTaxLiability,
       });
     }
+    if (data.payer == "firm" || data.payer == "llp") {
+      let response = calculateTaxForFirmsAndLLP(Number(data.taxableIncome));
+      setData({
+        ...data,
+        healthAndEducationCess: response.healthAndEducationCess,
+        incomeTax: response.incomeTax,
+        surcharge: response.surcharge,
+        totalTaxLiability: response.totalTaxLiability,
+      });
+    }
+    if (data.payer == "domesticCompany") {
+      let response = calculateTaxForDomesticCompany(Number(data.taxableIncome));
+      setData({
+        ...data,
+        healthAndEducationCess: response.healthAndEducationCess,
+        incomeTax: response.incomeTax,
+        surcharge: response.surcharge,
+        totalTaxLiability: response.totalTaxLiability,
+      });
+    }
+    if (data.payer == "foreignCompany") {
+      let response = calculateTaxForForigenCompany(Number(data.taxableIncome));
+      setData({
+        ...data,
+        healthAndEducationCess: response.healthAndEducationCess,
+        incomeTax: response.incomeTax,
+        surcharge: response.surcharge,
+        totalTaxLiability: response.totalTaxLiability,
+      });
+    }
+    if (data.payer == "co-oprative") {
+      let response = calculateTaxForCoprative(
+        Number(data.taxableIncome),
+        data.optfor115BAD == "true" ? true : false
+      );
+      setData({
+        ...data,
+        healthAndEducationCess: response.healthAndEducationCess,
+        incomeTax: response.incomeTax,
+        surcharge: response.surcharge,
+        totalTaxLiability: response.totalTaxLiability,
+      });
+    }
     next(true);
   }
   return (
     <Box
-      maxWidth="400px"
+      maxWidth={["400px", "600px"]}
+      padding={"2%"}
       mx="auto"
       py={4}
       as={motion.div}
       initial={{ x: 100 }}
       animate={{ x: 0 }}
+      boxShadow={"inner"}
+      bg="white"
+      borderRadius={"20px"}
     >
       <FormControl mb={4}>
         <FormLabel>Tax Payer</FormLabel>
@@ -55,12 +106,12 @@ function TaxCalculatorForm({ data, setData, next }) {
         >
           <option value="individual">Individual</option>
           <option value="firm">Firm</option>
-          <option value="firm">LLP</option>
+          <option value="llp">LLP</option>
           <option value="huf">HUF</option>
           <option value="aop">AOPs/BOI</option>
           <option value="domesticCompany">Domestic Company</option>
           <option value="foreignCompany">Foreign Company</option>
-          <option value="firm">Co-operative Society </option>
+          <option value="co-oprative">Co-operative Society </option>
         </Select>
       </FormControl>
 
@@ -82,6 +133,38 @@ function TaxCalculatorForm({ data, setData, next }) {
           </Select>
         </FormControl>
       )}
+      {data.payer == "co-oprative" && data.optfor115BAE != "true" && (
+        <FormControl>
+          <FormLabel>
+            Whether opting for taxation under Section 115BAD ?
+          </FormLabel>
+          <Select
+            placeholder="Select"
+            name="optfor115BAD"
+            value={data.optfor115BAD}
+            onChange={handleChange}
+          >
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </Select>
+        </FormControl>
+      )}
+      {data.payer == "co-oprative" && data.optfor115BAD != "true" && (
+        <FormControl>
+          <FormLabel>
+            Whether opting for taxation under Section 115BAE ?
+          </FormLabel>
+          <Select
+            placeholder="Select"
+            name="optfor115BAE"
+            value={data.optfor115BAE}
+            onChange={handleChange}
+          >
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </Select>
+        </FormControl>
+      )}
 
       <FormControl mb={4}>
         <FormLabel>Net Taxable Income</FormLabel>
@@ -93,49 +176,6 @@ function TaxCalculatorForm({ data, setData, next }) {
           onChange={handleChange}
         />
       </FormControl>
-
-      {/* <FormControl mb={4}>
-        <FormLabel>Income Tax</FormLabel>
-        <Input type="number" placeholder="Income Tax" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Surcharge</FormLabel>
-        <Input type="number" placeholder="Surcharge" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Education Cess</FormLabel>
-        <Input type="number" placeholder="Education Cess" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Secondary and higher education cess</FormLabel>
-        <Input
-          type="number"
-          placeholder="Secondary and higher education cess"
-        />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Total Tax Liability</FormLabel>
-        <Input type="number" placeholder="Total Tax Liability" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Relief</FormLabel>
-        <Input type="number" placeholder="Relief" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>TDS/TCS/MAT (AMT) Credit Utilized</FormLabel>
-        <Input type="number" placeholder="TDS/TCS/MAT (AMT) Credit Utilized" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Assessed Tax</FormLabel>
-        <Input type="number" placeholder="Assessed Tax" />
-      </FormControl> */}
 
       <Button colorScheme="blue" mt={4} width={"full"} onClick={handleTax}>
         Next
