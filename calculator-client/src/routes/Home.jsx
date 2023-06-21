@@ -23,7 +23,7 @@ export default function Home() {
   const [data, setData] = useState(init);
   const [isNext, setIsNext] = useState(false);
   return (
-    <Box m={["0%", "2%"]} p="2%" maxW="99vw">
+    <Box p="2%" maxW="99vw" bg="gray.100" minH={"100vh"}>
       <Heading m="1%">
         ADVANCE TAX CALCULATOR FOR FINANCIAL YEAR 2023-24
       </Heading>
